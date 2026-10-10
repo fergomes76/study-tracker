@@ -1,0 +1,800 @@
+/* Cores: os tons --t vêm do tema escolhido (o JavaScript troca esses valores) */
+:root {
+  --t50: #F1F9F3;
+  --t100: #DDF0E2;
+  --t300: #A8DBA8;
+  --t500: #7CC49A;
+  --t800: #2D5A40;
+  --bg: #FAFCFB;
+  --card: #fff;
+  --ink: #1F2A24;
+  --soft: #5E6E64;
+  --hero: var(--t50);
+  --line: #DDE5E0;
+  --base: #E4E4E4;
+  --shadow: 0 8px 24px rgba(0, 0, 0, .14);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #141815;
+    --card: #1E2420;
+    --ink: #EAF3EC;
+    --soft: #A9B9AE;
+    --line: #2B332D;
+    --base: #2A312C;
+    --hero: color-mix(in srgb, var(--t500) 15%, #141815);
+  }
+}
+
+/* Base */
+* {
+  box-sizing: border-box;
+  margin: 0;
+}
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: 'Figtree', system-ui, sans-serif;
+  line-height: 1.4;
+}
+
+ul,
+menu {
+  list-style: none;
+  padding: 0;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+  border: 0;
+  background: none;
+}
+
+:focus-visible {
+  outline: 3px solid var(--t500);
+  outline-offset: 2px;
+}
+
+h2 {
+  font-size: 24px;
+}
+
+h3 {
+  font-size: 20px;
+  text-align: center;
+  margin-bottom: 16px;
+}
+
+body > header,
+main,
+footer {
+  padding-inline: max(20px, calc((100% - 960px)/2));
+}
+
+/* Topo: título, tema, timer e métricas */
+body > header {
+  background: var(--hero);
+  display: grid;
+  grid-template-columns: 1fr auto;
+  justify-items: center;
+  align-items: center;
+  gap: 18px;
+  padding-block: 18px 34px;
+}
+
+body > header > * {
+  grid-column: 1/-1;
+}
+
+body > header > h1 {
+  grid-column: 1;
+  justify-self: start;
+  background: var(--t300);
+  color: var(--t800);
+  font-size: 15px;
+  padding: 7px 16px;
+  border-radius: 99px;
+}
+
+body > header > .pop {
+  grid-column: 2;
+  justify-self: end;
+}
+
+.pop {
+  position: relative;
+}
+
+summary {
+  list-style: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--t300);
+  color: var(--t800);
+  font-size: 14px;
+  font-weight: 700;
+  padding: 9px 14px;
+  border-radius: 99px;
+}
+
+summary::-webkit-details-marker {
+  display: none;
+}
+
+.pop menu {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 10px);
+  z-index: 9;
+  background: var(--card);
+  padding: 14px;
+  border-radius: 20px;
+  box-shadow: var(--shadow);
+  display: grid;
+  grid-template-columns: repeat(3, 40px);
+  gap: 12px;
+}
+
+.sw {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 3px solid var(--card);
+}
+
+.sw[aria-pressed="true"] {
+  outline: 3px solid var(--ink);
+}
+
+/* O círculo do timer é um anel (progresso da meta) com o disco por dentro */
+#timer {
+  --p: 0;
+  width: 272px;
+  height: 272px;
+  border-radius: 50%;
+  border: 12px solid transparent;
+  color: var(--t800);
+  box-shadow: var(--shadow);
+  background:
+    radial-gradient(circle at 30% 25%, var(--t100), var(--t300)) padding-box,
+    conic-gradient(var(--t800) calc(var(--p)*1%), var(--t500) 0) border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+}
+
+#timer h2 {
+  font-size: 22px;
+}
+
+#clock {
+  display: block;
+  font-size: 48px;
+  font-weight: 800;
+  letter-spacing: -1px;
+  font-variant-numeric: tabular-nums;
+}
+
+#cur {
+  max-width: 72%;
+  min-height: 20px;
+  font-size: 14px;
+  font-weight: 600;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+#ctl {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+#play {
+  width: 66px;
+  height: 66px;
+  border-radius: 50%;
+  background: var(--t800);
+  box-shadow: var(--shadow);
+  display: grid;
+  place-items: center;
+}
+
+#play svg {
+  width: 28px;
+  height: 28px;
+  fill: #fff;
+}
+
+#stop {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: 2px solid var(--t800);
+  color: var(--t800);
+  font-size: 18px;
+  line-height: 1;
+}
+
+#stop:disabled {
+  opacity: .35;
+  cursor: default;
+}
+
+#stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+  width: 100%;
+  padding-top: 20px;
+  border-top: 2px solid var(--t300);
+}
+
+#stats li {
+  background: var(--card);
+  border-radius: 18px;
+  padding: 12px 8px;
+  text-align: center;
+  box-shadow: var(--shadow);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--soft);
+}
+
+#stats b,
+#stats input {
+  display: block;
+  width: 100%;
+  font: 800 28px 'Figtree', system-ui, sans-serif;
+  color: var(--ink);
+  text-align: center;
+  background: none;
+  border: 0;
+}
+
+/* Objetivo de hoje: formulário e cards */
+main > section {
+  padding-top: 34px;
+}
+
+#objetivo {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: 18px;
+}
+
+#objetivo > ul {
+  grid-column: 1/-1;
+}
+
+#add {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+#add input {
+  width: 200px;
+  max-width: 42vw;
+  border: 2px solid var(--line);
+  background: var(--card);
+  color: var(--ink);
+  border-radius: 99px;
+  padding: 9px 16px;
+  font: inherit;
+  font-size: 14px;
+}
+
+#add input.bad {
+  border-color: #E26D6D;
+  animation: tremer .3s;
+}
+
+@keyframes tremer {
+  25% {
+    transform: translateX(-5px);
+  }
+
+  75% {
+    transform: translateX(5px);
+  }
+}
+
+#add > button,
+#add summary {
+  width: 42px;
+  height: 42px;
+  padding: 0;
+  border-radius: 50%;
+  background: var(--t300);
+  color: var(--t800);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+#add > button {
+  font-size: 24px;
+  line-height: 1;
+}
+
+#subs {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 16px;
+  align-items: start;
+}
+
+/* Card de estudo: fechado é uma pílula, aberto mostra as tarefas */
+.sub {
+  background: var(--card);
+  border: 2px solid var(--k500);
+  border-radius: 99px;
+  overflow: hidden;
+  transition: border-radius .2s;
+}
+
+.sub.open {
+  border-radius: 24px;
+}
+
+.sub.active {
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--k500) 45%, transparent);
+}
+
+.sub > header {
+  background: var(--k300);
+  color: var(--k800);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 8px;
+}
+
+.sub svg {
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.chk,
+.ico {
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  flex: none;
+}
+
+.chk {
+  width: 34px;
+  height: 34px;
+  background: var(--card);
+}
+
+.chk svg {
+  width: 18px;
+  height: 18px;
+  stroke-width: 3;
+  opacity: 0;
+}
+
+.sub.done .chk svg {
+  opacity: 1;
+}
+
+.ico {
+  width: 32px;
+  height: 32px;
+}
+
+.ico:hover {
+  background: color-mix(in srgb, var(--k800) 14%, transparent);
+}
+
+.ico svg {
+  width: 18px;
+  height: 18px;
+  stroke-width: 2.2;
+  transition: transform .2s;
+}
+
+.sub.open .chev svg {
+  transform: rotate(180deg);
+}
+
+.nm {
+  flex: 1;
+  min-width: 0;
+  padding: 4px;
+  text-align: left;
+  font-size: 16px;
+  font-weight: 700;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.sub.done .nm {
+  text-decoration: line-through;
+  opacity: .7;
+}
+
+.sub > ul,
+.sub > form {
+  display: none;
+  padding-inline: 14px;
+  font-size: 15px;
+}
+
+.sub > ul {
+  padding-top: 10px;
+}
+
+.sub.open > ul {
+  display: block;
+}
+
+.sub.open > form {
+  display: flex;
+  gap: 6px;
+  padding-block: 8px 14px;
+}
+
+.task {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 5px 0;
+  text-align: left;
+}
+
+.task.on {
+  text-decoration: line-through;
+  opacity: .6;
+}
+
+.box {
+  width: 18px;
+  height: 18px;
+  border-radius: 6px;
+  border: 2px solid var(--k500);
+  flex: none;
+  display: grid;
+  place-items: center;
+}
+
+.task.on .box {
+  background: var(--k500);
+}
+
+.task.on .box::after {
+  content: "";
+  width: 8px;
+  height: 4px;
+  border-left: 2px solid #fff;
+  border-bottom: 2px solid #fff;
+  transform: rotate(-45deg) translate(1px, -1px);
+}
+
+.sub form input {
+  flex: 1;
+  min-width: 0;
+  border: 2px solid var(--k300);
+  background: var(--card);
+  color: var(--ink);
+  border-radius: 99px;
+  padding: 6px 12px;
+  font: inherit;
+  font-size: 14px;
+}
+
+.sub form button {
+  background: var(--k300);
+  color: var(--k800);
+  border-radius: 99px;
+  padding: 6px 14px;
+  font-weight: 800;
+}
+
+.none,
+.empty {
+  color: var(--soft);
+  font-size: 14px;
+}
+
+.empty {
+  grid-column: 1/-1;
+  text-align: center;
+  padding: 8px 0;
+}
+
+/* Pílulas de progresso: a parte colorida é a porcentagem */
+.pill {
+  flex: 1;
+  min-width: 0;
+  min-height: 38px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 14px 0 10px;
+  border: 2px solid var(--k500);
+  border-radius: 99px;
+  background: linear-gradient(90deg, var(--k300) var(--w), var(--k100) var(--w));
+  color: var(--k800);
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.pill span {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.pill em {
+  font-size: 13px;
+  font-style: normal;
+}
+
+.dot {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  border: 2px solid var(--k500);
+  background: var(--card);
+  flex: none;
+}
+
+.dn .dot,
+.hi .dot {
+  background: var(--k500);
+}
+
+/* Estudando agora, concluído, relatório e histórico */
+#andamento {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  margin-top: 34px;
+  padding-block: 26px;
+  border-block: 2px solid var(--line);
+}
+
+#andamento > section {
+  padding: 0 22px;
+}
+
+#andamento > section + section {
+  border-left: 2px solid var(--line);
+}
+
+#doing,
+#done,
+#rows {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+#relatorio {
+  display: grid;
+  grid-template-columns: 1.25fr 1fr;
+  gap: 30px;
+  align-items: center;
+}
+
+#relatorio > h2,
+#historico {
+  grid-column: 1/-1;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+.row time {
+  min-width: 112px;
+  font-size: 22px;
+  font-weight: 700;
+}
+
+#donut {
+  position: relative;
+  width: 100%;
+  max-width: 280px;
+  margin: 0 auto;
+}
+
+#donut svg {
+  display: block;
+  width: 100%;
+}
+
+#donut figcaption {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--soft);
+}
+
+#donut b {
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--ink);
+}
+
+#historico {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  row-gap: 8px;
+}
+
+#historico h3 {
+  text-align: left;
+  font-size: 17px;
+  margin: 0;
+}
+
+#clr {
+  padding: 4px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--soft);
+  text-decoration: underline;
+}
+
+#hist {
+  grid-column: 1/-1;
+}
+
+.hi {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 0;
+  border-bottom: 1px solid var(--line);
+  font-size: 14px;
+}
+
+.hi b {
+  flex: 1;
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.hi span {
+  color: var(--soft);
+}
+
+time,
+.stat b,
+#stats b,
+#clock {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Rodapé e aviso */
+footer {
+  margin-top: 46px;
+  padding-block: 28px 30px;
+  background: var(--hero);
+  text-align: center;
+}
+
+footer p {
+  color: var(--soft);
+  font-size: 14px;
+}
+
+#gh {
+  display: block;
+  margin-top: 8px;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--ink);
+  text-decoration: none;
+}
+
+#toast {
+  position: fixed;
+  left: 50%;
+  bottom: 20px;
+  transform: translate(-50%, 20px);
+  max-width: 90vw;
+  padding: 10px 18px;
+  border-radius: 99px;
+  background: var(--t800);
+  color: #fff;
+  font-size: 14px;
+  font-weight: 600;
+  text-align: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: .25s;
+  z-index: 20;
+}
+
+#toast.show {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
+
+/* Celular */
+@media (max-width: 680px) {
+  #objetivo,
+  #andamento,
+  #relatorio {
+    grid-template-columns: 1fr;
+  }
+
+  #andamento {
+    gap: 24px;
+  }
+
+  #andamento > section + section {
+    border-left: 0;
+    border-top: 2px solid var(--line);
+    padding-top: 24px;
+  }
+
+  #add input {
+    flex: 1;
+    width: auto;
+    max-width: none;
+    min-width: 0;
+  }
+
+  #timer {
+    width: 236px;
+    height: 236px;
+  }
+
+  #clock {
+    font-size: 40px;
+  }
+
+  #stats li {
+    padding-inline: 4px;
+  }
+
+  #stats b {
+    font-size: 20px;
+  }
+
+  #stats input {
+    font-size: 17px;
+    padding: 0;
+  }
+
+  .row {
+    gap: 10px;
+  }
+
+  .row time {
+    min-width: 88px;
+    font-size: 17px;
+  }
+}

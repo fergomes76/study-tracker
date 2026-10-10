@@ -1,0 +1,69 @@
+<<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Study tracker</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;600;700;800&display=swap">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header>
+  <h1>study tracker</h1>
+  <details class="pop"><summary>Tema do app</summary><menu id="pop-app"></menu></details>
+
+  <section id="timer">
+    <h2>timer</h2>
+    <output id="clock">00:00:00</output>
+    <small id="cur"></small>
+  </section>
+  <p id="ctl">
+    <button id="play" aria-label="Iniciar"></button>
+    <button id="stop" aria-label="Finalizar sessão" disabled>■</button>
+  </p>
+
+  <ul id="stats">
+    <li>meta do dia <input id="goal" aria-label="Meta do dia (h:mm)"></li>
+    <li>porcentagem <b id="pct">0%</b></li>
+    <li>matérias <b id="cnt">0</b></li>
+  </ul>
+</header>
+
+<main>
+  <section id="objetivo">
+    <h2>objetivo de hoje</h2>
+    <form id="add">
+      <input id="newname" placeholder="Nova matéria" aria-label="Título do estudo" maxlength="28">
+      <button aria-label="Adicionar estudo">+</button>
+      <details class="pop"><summary aria-label="Cor da matéria">cor</summary><menu id="pop-new"></menu></details>
+    </form>
+    <ul id="subs"></ul>
+  </section>
+
+  <section id="andamento">
+    <section><h3>estudando agora</h3><ul id="doing"></ul></section>
+    <section><h3>concluído</h3><ul id="done"></ul></section>
+  </section>
+
+  <section id="relatorio">
+    <h2>relatório</h2>
+    <ul id="rows"></ul>
+    <figure id="donut"></figure>
+    <section id="historico">
+      <h3>histórico de sessões</h3>
+      <button id="clr">limpar histórico</button>
+      <ul id="hist"></ul>
+    </section>
+  </section>
+</main>
+
+<footer>
+  <p>Study tracker, projeto acadêmico. Seus dados ficam salvos neste navegador.</p>
+  <a id="gh" target="_blank" rel="noopener"></a>
+</footer>
+
+<output id="toast"></output>
+<script src="script.js"></script>
+</body>
+</html>
